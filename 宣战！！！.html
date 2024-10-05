@@ -1,0 +1,286 @@
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一键宣战装置</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            background-color: #343e55;
+            color: white;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+        h1 {
+            font-size: 4rem;
+            margin: 0;
+        }
+        button {
+            border: none;
+            font-size: 1.5rem;
+            border-radius: 0;
+            background-color: #ffbf6b;
+            padding: 10px 20px;
+        }
+        button:active {
+            background-color: #ff9100;
+        }
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            li {
+                display: block;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            text-align: justify;
+        }
+        .ckbox {
+            flex: none;
+            display: inline-block;
+            position: relative;
+            padding: 0;
+            margin: 0;
+            height: 1.5rem;
+            width: 1.5rem;
+            input[type="checkbox"] {
+                position: absolute;
+                width: 1.5rem;
+                height: 1.5rem;
+                padding: 0;
+                margin: 0;
+                top: 1px;
+            }
+        }
+        .flex-col-10 {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            gap: 1rem;
+        }
+        .container {
+            margin: auto;
+            height: 100vh;
+            gap: 0;
+            max-width: 30rem;
+            overflow: auto;
+        }
+        .wt {
+            background-color: white;
+            color: black;
+            padding: 1rem;
+            text { text-align: justify; }
+        }
+        .b1 {
+            border-radius: 100%;
+            width: 180px;
+            height: 180px;
+            padding: 0;
+            position: relative;
+            background: linear-gradient(0, #ff9100, #ffbf6b);
+            &::before {
+                display: block;
+                position: absolute;
+                content: "";
+                background: linear-gradient(0, #ffbf6b, #ff9100);
+                top: 10px;
+                left: 10px;
+                width: 160px;
+                height: 160px;
+                border-radius: 100%;
+            }
+        }
+        .b1:active {
+            background: linear-gradient(0, #ffbf6b, #ff9100);
+            &::before {
+                background: linear-gradient(0, #ff9100, #ffbf6b);
+            }
+        }
+        canvas {
+            width: 160px;
+            height: 160px;
+            border: #a5bede 1px solid;
+        }
+        #sp {
+            border: none;
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            bottom: 0;
+            left: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="pedding" class="container flex-col-10">
+        <div class="flex-col-10">
+            <h1>一键宣战装置</h1>
+            <span>人类必胜！我要提前向AI智障宣战！！</span>
+            <span>人族永昌，亘古不灭！！！</span>
+        </div>
+        <div class="activity flex-col-10">
+            <p>点击3次按钮，向AI宣战！<br>👇</p>
+            <button class="b1"></button>
+        </div>
+        <div class="activity flex-col-10">
+            <p>再点击2次按钮，向AI宣战！<br>👇</p>
+            <button class="b1"></button>
+        </div>
+        <div class="activity flex-col-10">
+            <p>最后点击1次按钮，向AI宣战！<br>👇</p>
+            <button class="b1"></button>
+        </div>
+        <div class="activity flex-col-10 wt">
+            <span>说明</span>
+            <span>不需要登记姓名和个人信息，万能的联盟信息库自然会知道你的身份~</span>
+            <button>知道了</button>
+        </div>
+        <div class="activity flex-col-10 wt">
+            <span>勾选你同意的选项</span>
+            <ul>
+                <li>
+                    <div class="ckbox">
+                        <input type="checkbox" id="i1" />
+                    </div>
+                    <label for="i1">我愿意为联盟效力！</label>
+                </li>
+                <li>
+                    <div class="ckbox">
+                        <input type="checkbox" id="i2" />
+                    </div>
+                    <label for="i2">我代表自己向AI宣战！</label>
+                </li>
+                <li>
+                    <div class="ckbox">
+                        <input type="checkbox" id="i3" />
+                    </div>
+                    <label for="i3">如果我死了，请联盟尽力产生我的优质克隆体为前线而战！</label>
+                </li>
+            </ul>
+            <button>完成</button>
+        </div>
+    </div>
+    <div id="finish" class="container flex-col-10">
+        <div class="flex-col-10">
+            <h1>宣战成功！</h1>
+            <span>联盟会记住你的贡献</span>
+        </div>
+        <div class="activity flex-col-10">
+            <span>新人类编号:</span>
+            <div class="flex-col-10 wt">
+                <canvas width="160" height="160"></canvas>
+                <span id="number">2024-10-01-0003</span>
+            </div>
+        </div>
+    </div>
+    <canvas id="sp"></canvas>
+    <script>
+        const roman = num => {
+            let arr = [[1, "I"],[4, "IV"],[5, "V"],[9, "IX"],[10, "X"],[40, "XL"],[50, "L"],[90, "XC"],[100, "C"],[400, "CD"],[500, "D"],[900, "CM"],[1000, "M"],];
+            let result = '';
+            let n = 0;
+
+            while(num > 0) {
+                const [number, code] = arr.pop();
+                if(num >= number) {
+                    n = Math.floor(num / number);
+                    num = num % number;
+                    while(n > 0) {
+                        result += code;
+                        n--;
+                    }
+                }
+            }
+            return result
+        };
+        const [pedding, finish] = document.body.querySelectorAll('.container');
+        const [first, second, third, statement, choose] = document.body.querySelectorAll('.activity');
+        const p = first.parentElement;
+        finish.remove();
+        second.remove();
+        third.remove();
+        statement.remove();
+        choose.remove();
+        first.querySelector('button').onclick = () => {
+            first.remove();
+            p.appendChild(statement);
+        }
+        statement.querySelector('button').onclick = () => {
+            statement.remove();
+            p.appendChild(second);
+        }
+        second.querySelector('button').onclick = () => {
+            second.remove();
+            p.appendChild(choose);
+        }
+        choose.querySelector('button').onclick = () => {
+            choose.remove();
+            p.appendChild(third);
+        }
+        third.querySelector('button').onclick = () => {
+            pedding.remove();
+            document.body.appendChild(finish);
+
+            const number = finish.querySelector('#number');
+            const canvas = finish.querySelector('canvas');
+            const ctx = canvas.getContext('2d');
+
+            const date = new Date();
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const hour = date.getHours();
+            const code = Math.random().toString(36).substr(2, 4).toUpperCase();
+            number.textContent = `${roman(year)}-${roman(month)}-${roman(day)}-${roman(hour)}-${code}`;
+            const spec = [0,3,15,12,1,7,14,8,2,11,13,4,5,6,10,9];
+            const spec2 = [0,3,1,2];
+            const result = [];
+            result.push(...year.toString().split('').map(Number));
+            result.push(month);
+            let t = 0;
+            if (day >= 16) {
+                t += 1
+                result.push(day - 16);
+            } else {
+                result.push(day);
+            }
+            if (hour > 12) {
+                t += 2
+                result.push(hour - 12);
+            } else {
+                result.push(hour);
+            }
+            result.push(t);
+            result.push(...parseInt(code, 36).toString().split('').map(Number));
+            for (let i = 0; i < result.length; i++) {
+                const base = spec[i]
+                const bx = base % 4 * 40;
+                const by = Math.floor(base / 4) * 40;
+                const n = result[i].toString(2).padStart(4,'0').split('').map(Number).reverse();
+                for (let j = 0; j < 4; j++) {
+                    if(!n[j]) continue;
+                    const pos = spec2[j];
+                    const x = pos % 2 * 20 + bx;
+                    const y = Math.floor(pos / 2) * 20 + by;
+                    ctx.fillRect(x,y,20,20);
+                    ctx.fillStyle="#000";
+                }
+
+            }
+            let spCanvas = document.querySelector("#sp");
+            spCanvas.width = window.innerWidth;
+            spCanvas.height = window.innerHeight;
+            document.body.appendChild(spCanvas);
+            let confetti_button = confetti.create(spCanvas);
+            confetti_button().then(() => spCanvas.remove());
+        }
+
+    </script>
+</body>
+</html>
